@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     environment {
-        DOCKER_IMAGE = "your-dockerhub-username/test-html"   // change this
+        DOCKER_IMAGE = "gopalh18/index"   // change this
         DOCKER_TAG = "latest"
         KUBE_CONFIG = credentials('kubeconfig')  // Add kubeconfig as Jenkins secret
     }
