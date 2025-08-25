@@ -2,9 +2,8 @@ pipeline {
     agent any
 
     environment {
-        DOCKER_IMAGE = "gopalh18/index"   // change this
+        DOCKER_IMAGE = "your-dockerhub-username/test-html"   // change this
         DOCKER_TAG = "latest"
-        KUBE_CONFIG = credentials('kubeconfig')  // Add kubeconfig as Jenkins secret
     }
 
     stages {
@@ -34,9 +33,10 @@ pipeline {
 
         stage('Deploy to Kubernetes') {
             steps {
-                script {
-                    // Example deployment yaml
-                    writeFile file: 'k8s-deployment.yaml', text: """
+                withCredentials([file(credentialsId: 'kubeconfig', variable: 'KUBECONFIG')]) {
+                    script {
+                        // Example deployment yaml
+                        writeFile file: 'k8s-deployment.yaml', text: """
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -70,12 +70,8 @@ spec:
       targetPort: 80
   type: NodePort
 """
-                    // Apply deployment to Kubernetes
-                    sh """
-                      echo "$KUBE_CONFIG" > kubeconfig.yaml
-                      export KUBECONFIG=kubeconfig.yaml
-                      kubectl apply -f k8s-deployment.yaml
-                    """
+                        sh "kubectl apply -f k8s-deployment.yaml"
+                    }
                 }
             }
         }
