@@ -40,19 +40,19 @@ pipeline {
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: html-test
+  name: my-app
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: html-test
+      app: my-app
   template:
     metadata:
       labels:
-        app: html-test
+        app: my-app
     spec:
       containers:
-      - name: html-container
+      - name: my-app
         image: $DOCKER_IMAGE:$DOCKER_TAG
         ports:
         - containerPort: 80
@@ -60,10 +60,10 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: html-service
+  name: my-app
 spec:
   selector:
-    app: html-test
+    app: my-app
   ports:
     - protocol: TCP
       port: 80
