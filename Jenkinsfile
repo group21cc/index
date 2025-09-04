@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     environment {
-        DOCKER_IMAGE = "your-dockerhub-username/test-html"   // change this
+        DOCKER_IMAGE = "gopalh18/index"   
         DOCKER_TAG = "latest"
     }
 
@@ -35,7 +35,7 @@ pipeline {
             steps {
                 withCredentials([file(credentialsId: 'kubeconfig', variable: 'KUBECONFIG')]) {
                     script {
-                        // Example deployment yaml
+                        
                         writeFile file: 'k8s-deployment.yaml', text: """
 apiVersion: apps/v1
 kind: Deployment
@@ -71,6 +71,8 @@ spec:
   type: NodePort
 """
                         sh "kubectl apply -f k8s-deployment.yaml"
+                        sh "kubectl apply -f k8s/service.yaml"
+
                     }
                 }
             }
