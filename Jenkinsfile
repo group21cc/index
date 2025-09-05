@@ -36,44 +36,8 @@ pipeline {
                 withCredentials([file(credentialsId: 'kubeconfig', variable: 'KUBECONFIG')]) {
                     script {
                         
-                        writeFile file: 'k8s-deployment.yaml', text: """
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: my-app
-spec:
-  replicas: 1
-  selector:
-    matchLabels:
-      app: my-app
-  template:
-    metadata:
-      labels:
-        app: my-app
-    spec:
-      containers:
-      - name: my-app
-        image: $DOCKER_IMAGE:$DOCKER_TAG
-        ports:
-        - containerPort: 80
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: my-app-service
-spec:
-  selector:
-    app: my-app
-  type: NodePort
-  ports:
-    - name: http
-      port: 80
-      targetPort: 80
-      nodePort: 30808   
-    
-
-"""
-                        sh "kubectl apply -f k8s-deployment.yaml"
+                          sh "kubectl apply -f k8s-deployment.yaml"
+                          sh "kubectl apply -f k8s-service.yaml"
                        
                     }
                 }

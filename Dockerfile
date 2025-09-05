@@ -4,7 +4,7 @@ FROM nginx:alpine
 COPY index.html /usr/share/nginx/html/index.html
 
 # Expose ports 80, 443, and 8080
-EXPOSE 80 80 8080
+EXPOSE 80 
 
 # Start nginx
 CMD ["nginx", "-g", "daemon off;"]

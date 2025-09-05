@@ -2,8 +2,6 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: my-app
-  labels:
-    app: my-app
 spec:
   replicas: 1
   selector:
@@ -15,7 +13,7 @@ spec:
         app: my-app
     spec:
       containers:
-      - name: my-app-service
-        image: gopalh18/index
+      - name: my-app
+        image: $DOCKER_IMAGE:$DOCKER_TAG
         ports:
         - containerPort: 80
