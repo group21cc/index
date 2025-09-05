@@ -69,15 +69,8 @@ spec:
     - name: http
       port: 80
       targetPort: 80
-      nodePort: 30080   # must be between 30000–32767
-    - name: https
-      port: 443
-      targetPort: 443
-      nodePort: 30443
-    - name: custom
-      port: 8080
-      targetPort: 8080
-      nodePort: 30808
+      nodePort: 30808   
+    
 
 """
                         sh "kubectl apply -f k8s-deployment.yaml"
