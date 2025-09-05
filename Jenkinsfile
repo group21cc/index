@@ -60,15 +60,25 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: my-app
+  name: my-app-service
 spec:
   selector:
-    app: 
+    app: my-app
+  type: NodePort
   ports:
-    - protocol: TCP
+    - name: http
       port: 80
       targetPort: 80
-  type: NodePort
+      nodePort: 30080   # must be between 30000–32767
+    - name: https
+      port: 443
+      targetPort: 443
+      nodePort: 30443
+    - name: custom
+      port: 8080
+      targetPort: 8080
+      nodePort: 30808
+
 """
                         sh "kubectl apply -f k8s-deployment.yaml"
                        
