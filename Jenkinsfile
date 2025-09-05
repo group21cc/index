@@ -63,7 +63,7 @@ metadata:
   name: my-app
 spec:
   selector:
-    app: my-app
+    app: 
   ports:
     - protocol: TCP
       port: 80
@@ -71,8 +71,7 @@ spec:
   type: NodePort
 """
                         sh "kubectl apply -f k8s-deployment.yaml"
-                        sh "kubectl apply -f k8s/service.yaml"
-
+                       
                     }
                 }
             }
