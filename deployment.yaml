@@ -15,7 +15,7 @@ spec:
         app: my-app
     spec:
       containers:
-      - name: my-app
+      - name: my-app-service
         image: gopalh18/index
         ports:
         - containerPort: 80
