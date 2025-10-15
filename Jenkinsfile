@@ -35,15 +35,14 @@ pipeline {
         }
 
         stage('Deploy to Kubernetes') {
-            steps {
-                withCredentials([file(credentialsId: 'k8s', variable: 'KUBECONFIG')]) {
-                    script {
-                        sh "kubectl apply -f dev.deployment.yaml"
-                        sh "kubectl apply -f dev.service.yaml"
-                    }
-                }
-            }
+    steps {
+        withCredentials([file(credentialsId: 'k8s', variable: 'KUBECONFIG')]) {
+            sh 'kubectl apply --insecure-skip-tls-verify -f dev.deployment.yaml'
+            sh 'kubectl apply --insecure-skip-tls-verify -f dev.service.yaml'
         }
+    }
+}
+
     }
 
     post {
