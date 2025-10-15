@@ -35,13 +35,15 @@ pipeline {
         }
 
         stage('Deploy to Kubernetes') {
-    steps {
-        withCredentials([file(credentialsId: 'k8s', variable: 'KUBECONFIG')]) {
-            sh 'kubectl apply --insecure-skip-tls-verify -f dev.deployment.yaml'
-            sh 'kubectl apply --insecure-skip-tls-verify -f dev.service.yaml'
+            steps {
+                withCredentials([file(credentialsId: 'k8s', variable: 'KUBECONFIG')]) {
+                    // kubectl automatically uses the temporary file path set in KUBECONFIG
+                    sh 'kubectl apply --insecure-skip-tls-verify -f dev.deployment.yaml'
+                    sh 'kubectl apply --insecure-skip-tls-verify -f dev.service.yaml'
         }
     }
 }
+
 
     }
 
