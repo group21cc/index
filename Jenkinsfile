@@ -2,33 +2,30 @@ pipeline {
     agent any
 
     environment {
-        DOCKER_IMAGE = "gopalh18/index"
-        DOCKER_TAG = "latest"
+        REGISTRY = 'nexus-host:8082'                    // Replace with your Nexus host
+        IMAGE_NAME = 'gopalh18/index'                   // Replace with your Nexus repo/image
+        IMAGE_TAG = "v1.${BUILD_NUMBER}"
+        FULL_IMAGE = "${REGISTRY}/${IMAGE_NAME}:${IMAGE_TAG}"
     }
 
     stages {
         stage('Checkout') {
             steps {
-                // Use this if Jenkinsfile is in the same repo
                 checkout scm
-                // If not, use:
-                // git branch: 'main', url: 'https://github.com/group21cc/index.git'
             }
         }
 
         stage('Build Docker Image') {
             steps {
-                script {
-                    sh "docker build -t ${DOCKER_IMAGE}:${DOCKER_TAG} ."
-                }
+                sh "docker build -t ${FULL_IMAGE} ."
             }
         }
 
-        stage('Push to DockerHub') {
+        stage('Push to Nexus') {
             steps {
                 script {
-                    withDockerRegistry([credentialsId: 'dockerhub-credentials', url: '']) {
-                        sh "docker push ${DOCKER_IMAGE}:${DOCKER_TAG}"
+                    withDockerRegistry([credentialsId: 'nexus-creds', url: "http://${REGISTRY}"]) {
+                        sh "docker push ${FULL_IMAGE}"
                     }
                 }
             }
@@ -38,8 +35,12 @@ pipeline {
             steps {
                 withCredentials([file(credentialsId: 'kubeconfig', variable: 'KUBECONFIG')]) {
                     script {
-                        sh "kubectl apply -f deployment.yaml"
-                        sh "kubectl apply -f service.yaml"
+                        // Replace IMAGE_PLACEHOLDER in YAMLs and apply
+                        sh """
+                        sed 's|IMAGE_PLACEHOLDER|${FULL_IMAGE}|' index/dev.deployment.yaml > k8s-deploy.yaml
+                        kubectl apply -f k8s-deploy.yaml
+                        kubectl apply -f index/dev.service.yaml
+                        """
                     }
                 }
             }
@@ -48,10 +49,10 @@ pipeline {
 
     post {
         success {
-            echo '✅ Deployment successful!'
+            echo "✅ Deployment complete: ${FULL_IMAGE}"
         }
         failure {
-            echo '❌ Pipeline failed!'
+            echo "❌ Something went wrong"
         }
     }
 }
